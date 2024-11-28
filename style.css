@@ -1,0 +1,149 @@
+.title {
+    text-align: center;
+    padding: 2rem 0rem;
+}
+
+.main-content {
+    text-align: center;
+}
+
+#login-bar {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0rem;
+}
+
+#login-bar button {
+    margin: 0rem 1rem;
+}
+
+.footer {
+    text-align: center;
+    margin: 2rem 0rem;
+}
+
+#rules-btn {
+    margin: 0rem 1rem;
+}
+
+.main-content form{
+    margin: 1rem 0rem;
+}
+
+#userStatus{
+    margin-bottom: 0;
+}
+
+#game-rules {
+    max-width: 50rem;
+    display: inline-block;
+}
+
+.inner-box{
+    text-align: start;
+    margin-left: 3rem;
+}
+
+#player-list{
+    list-style-type: none!important;
+    margin-left: -40px;
+}
+
+#player1, #player2{
+    margin-top: 1rem;
+}
+
+
+
+/* Define color variables */
+:root {
+    --red: red;
+    --blue: blue;
+    --green: green;
+    --yellow: yellow;
+}
+
+.color-container{
+    display: flex;
+    margin: 1rem 0;
+}
+
+.color-buttons {
+    display: flex;
+    justify-content: space-around;
+    width: 9rem;
+}
+
+.color-button {
+    width: 1.7rem;
+    height: 1.7rem;
+    border: 7px solid lightgrey;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.color-button.active {
+    background-color: #ccc;
+}
+
+/* Set initial color for the first option */
+.color-button[data-color="r"] {
+    background-color: var(--red);
+}
+
+/* Dynamically set color based on selected option */
+.color-button[data-color="b"] {
+    background-color: var(--blue);
+}
+
+.color-button[data-color="g"] {
+    background-color: var(--green);
+}
+
+.color-button[data-color="y"] {
+    background-color: var(--yellow);
+}
+
+
+/* #player1-color {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+}
+
+#player1-color option {
+    width: 1.7rem;
+    height: 1.7rem;
+    border: 7px solid lightgrey;
+    border-radius: 5px;
+    cursor: pointer;
+} */
+
+/* #player1-color::after {
+    content: '';
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    background-color: var(--player-color);
+    border-radius: inherit;
+    cursor: pointer;
+}
+
+#player1-color[value="r"]::after {
+    background-color: red;
+}
+
+#player1-color[value="b"]::after {
+    background-color: blue;
+}
+
+#player1-color[value="g"]::after {
+    background-color: green;
+}
+
+#player1-color[value="y"]::after {
+    background-color: yellow;
+} */

@@ -25,6 +25,9 @@
         <input type="submit" value="Register">
     </form>
 
+    <button onclick="document.location='index.php'">Return Home</button> 
+
+
     <?php
     // Include your database connection configuration
     include 'config.php';
@@ -37,28 +40,47 @@
         $username = $_POST['username'];
         $password = $_POST['password'];
         
-        $passwd_hash = password_hash($_POST['password'], PASSWORD_DEFAULT); // Hash the password
+        $passwd_hash = password_hash($password, PASSWORD_DEFAULT); // Hash the password
 
-        // Prepare the SQL statement with placeholders to prevent SQL injection
-        $sql = "INSERT INTO users (firstname, lastname, email, username, passwd, score) VALUES (?, ?, ?, ?, ?, ?)";
+        //SQL Statement to check if the user exists in database
+        $sqlUserCheck = "SELECT * FROM users WHERE username = '".$username."'";
 
-        $stmt = $conn->prepare($sql);
+        $UsrCheck = $conn->prepare($sqlUserCheck);
+        if($UsrCheck){
+            $UsrCheck->execute();
+            $check = $UsrCheck->get_result();
+        }
 
-        if ($stmt) {
-            $stmt->bind_param("sssssi", $firstname, $lastname, $email, $username, $passwd_hash, 0); // Bind variables for secure insertion
-
-            if ($stmt->execute()) {
-                echo "Registration successful! You can now log in.";
-            } else {
-                echo "Error: " . $stmt->error;
-            }
-
-            $stmt->close();
+        if($check->num_rows == 1){
+            echo 'Username already exists. Please choose another username.';
+            $check->close();
         } else {
-            echo "Error: Failed to prepare SQL statement.";
+
+            // Prepare the SQL statement with placeholders to prevent SQL injection
+            $sql = "INSERT INTO users (firstname, lastname, email, username, passwd, score) VALUES ('".$firstname."','".$lastname."','".$email."','".$username."','".$passwd_hash."',0)";
+
+            // Use var_dump to inspect the values
+            var_dump($sql);
+
+            $stmt = $conn->prepare($sql);
+
+            if ($stmt) {
+                //$stmt->bind_param("sssssi", $firstname, $lastname, $email, $username, $password, 0); // Bind variables for secure insertion
+
+                if ($stmt->execute()) {
+                    echo "Registration successful! You can now login.";
+                } else {
+                    echo "Error: " . $stmt->error;
+                }
+
+                $stmt->close();
+            } else {
+                echo "Error: Failed to prepare SQL statement.";
+            }
         }
 
         $conn->close();
+
     }
     ?>
 </body>
