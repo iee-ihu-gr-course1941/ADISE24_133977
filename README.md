@@ -162,9 +162,61 @@ The lobby.php page interacts with **check_game_status.php, checkReadiness.php, u
   </tbody>
 </table>
 
-## Alpha03 (Possible Enhancements - Additions)
-* Game.php - Page Completion
-* I will transfer Login, Register in my Index page
-* I will add User Login Status and Logout in every page
+## Alpha03 (Released - 10/01/2025)
+* Main Game: 
+  * **Game.php** (Not Working - Analysis below)
+  * Helpers:
+    * **board_transactions.php** (Analysis below)
+    * **end_game_functions.php** (Analysis below)
+    * **start_game_functions.php** (Analysis below)
+    * **game.js** (Analysis below)
+* Known Bugs:
+    * If a player aborts the game the other player needs to refresh to find out
+    * Also, they need to logout to join in a new game
+    * In the lobby page, needs a refresh to appear the other player's ID
 
+### Game Functionality (game.php)
 
+The code provides the following functionalities:
+
+* Connects to the database to retrieve game data (using PHP).
+* Establishes the current player and displays the appropriate UI elements (using PHP).
+* Loads available game pieces for each player based on their role (using JavaScript).
+* Enables players to select a piece and a position on the game board (using JavaScript).
+* Sends the player's move (piece ID and position) to the server for validation and processing (using JavaScript).
+* Updates the game board and available pieces based on the server's response (using JavaScript).
+* Handles turn management, disabling input for the non-active player (using JavaScript).
+* Calculates and displays the winner upon game over (using JavaScript).
+* Allows players to exit the game (using JavaScript).
+
+### Game JavaScript (game.js)
+
+Here's a brief overview of the game methods:
+
+* **init()**: This method is likely called to initialize the game. It logs the game ID, player ID, username, and board ID to the console and then calls the **loadBoard** method to fetch the initial game board data.
+* **reloadBoard()**: This method is used to reload the game board data from the server. It makes an AJAX request to the **board_transactions.php** script with an action of load and the game ID and board ID as parameters. Upon successful response, it updates the this.board property and calls the **renderBoard** method to update the visual representation of the board.
+* **loadBoard()**: This method is similar to **reloadBoard** but might be used specifically for the initial loading of the board data. It follows the same logic as **reloadBoard** to fetch the board data and update the game state.
+* **loadPlayerColors()**: This method fetches the player color assignments from the server. It makes an AJAX request to the **board_transactions.php** script with an action of **loadPlayerColors** and the game ID as a parameter. Upon successful response, it stores the player colors in the **this.playerColors** property, sets the currentPlayerId and currentTurn properties based on assumptions (e.g., assuming player 1 starts), and renders the player stats using the renderStats method.
+* **renderBoard()**: This method is responsible for creating a visual representation of the game board on the HTML page. It iterates through the this.board array, which contains the board data, and creates a table element with corresponding cells. The background color of each cell is set based on the player color stored in the board data. Finally, the created table is appended to the game board container element on the HTML page.
+* **renderStats()**: This method updates the section displaying the current player
+* **Add a piece**:
+
+  * This function seems to handle adding a piece to the game board.
+  * It performs validations to ensure the player placing the piece is the current player and the piece being placed is valid.
+  * It also validates the coordinates where the piece is being placed.
+  * If all validations pass, the function updates the board state and advances the game to the next player's turn.
+* **Next player**:
+  * This function simply switches the current player based on the turn.
+* **Update board on server**:
+  * This function sends an AJAX request to the server to update the game board state with the newly placed piece.
+* **Fetch and render placed pieces**:
+  * This function retrieves the current state of the placed pieces from the server and updates the game board visually to reflect the changes.
+* **Validate coordinates**: (This functionality seems to be implemented but commented out)
+ * This function likely checks if the coordinates provided for placing a piece are valid within the game board boundaries and rules.
+* **Has available pieces**:
+ * This function seems to check if the current player has any available pieces to place on the board.
+* **Ending state**:
+ * This function updates the game state to indicate the end of the game and assigns a winner.
+* **Calculate and display scores**:
+ * This function retrieves the scores for each player from the server and calculates the total score.
+It likely also updates the game UI to display the final scores.
