@@ -227,3 +227,76 @@ Here's a brief overview of the game methods:
 
   * This function retrieves the scores for each player from the server and calculates the total score.
 It likely also updates the game UI to display the final scores.
+
+
+### Board Transactions (board_transactions.php)
+
+This code defines functions for managing the game board in a board game. It includes:
+
+* **Board Initialization**:
+
+ * Creates a 20x20 2D array representing the empty board.
+ * Stores the initial board state in the database.
+* **Board Loading**:
+
+ * Retrieves the current state of the board from the database.
+* **Board Updating**:
+
+ * Updates the board state in the database with the latest changes.
+* **Player Color Loading**:
+
+ * Retrieves the colors assigned to each player from the database.
+* **Placement Validation**:
+
+  * This is a core function that checks the validity of a piece placement.
+    * It incorporates several checks:
+      * **Bounds Check**: Ensures the placed piece doesn't go beyond the board boundaries.
+      * **Adjacency Check**: Verifies if the placed piece is adjacent to at least one of the player's existing pieces.
+      * **Overlap Check**: Checks if the placed piece overlaps with any existing pieces on the board.
+
+* **Helper Functions**:
+
+  * **getCurrentPlayerTurn()**: Retrieves the current player's turn.
+  * **getCurrentPlayerID()**: Retrieves the IDs of the players.
+  * **getPlayerPiecesOnBoard()**: Retrieves the coordinates of the player's existing pieces on the board.
+  * **getPlayerPiecesFromDatabase()**: Retrieves the player's pieces from the database.
+  * **getPieceCoordinatesFromDatabase()**: Retrieves the coordinates of a specific piece from the database.
+  * **hasAdjacentPiece()**: Checks if the placed piece is adjacent to any existing pieces.
+  * **hasOverlappingPieces()**: Checks if the placed piece overlaps with any existing pieces.
+  * **hasAvailableMoves()**: Checks if the current player has any available moves.
+  * **getBoardStateFromDatabase()**: Retrieves the current state of the board from the database.
+  * **getPotentialPositions()**: Generates potential positions for placing a piece based on existing player pieces.
+  * **getAdjacentCells()**: Returns the coordinates of adjacent cells to a given cell.
+  * **placePieceOnBoard()**: Simulates placing a piece on the board and returns the updated board state.
+
+* **Database Interactions**:
+
+ * The code interacts with a database (likely MySQL) to store and retrieve game data:
+ * Board initialization, loading, and updating.
+ * Player information, including colors.
+ * Piece information and placements.
+
+Also, the code handles incoming requests (POST requests) to perform various actions related to the game board. These actions include:
+
+  * **Initializing the board**: Creates a new board for a given game.
+  * **Loading the board**: Retrieves the current state of the board from the database.
+  * **Updating the board**: Updates the board state after a piece is placed.
+  * **Loading player colors**: Retrieves the colors assigned to each player.
+  * **Loading available pieces**: Retrieves the pieces available to each player.
+  * **Validating piece IDs**: Checks if a given piece ID is valid for the current player.
+  * **Validating coordinates**: Checks if the specified coordinates for placing a piece are valid.
+  * **Retrieving piece coordinates**: Retrieves the coordinates of a specific piece.
+  * **Retrieving placed pieces**: Retrieves the coordinates of all placed pieces on the board.
+  * **Calculating scores**: Calculates the scores for each player based on their placed pieces. 
+
+**Request Handling**:
+
+ * The code begins by checking for a POST request and the presence of a gameId.
+ * It then uses a series of if-else statements to determine the requested action based on the action parameter.
+ * Each action is handled by a corresponding function or a set of database queries.
+**Data Handling**:
+
+ * The code receives data from the POST request, such as gameId, boardId, playerId, coordinates, and pieceId.
+ * It validates the input data (e.g., checking for numeric values, checking for required parameters).
+ * It interacts with the database to retrieve and update game data.
+ * It uses JSON encoding to send data back to the client.
