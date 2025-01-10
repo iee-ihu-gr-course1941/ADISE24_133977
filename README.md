@@ -174,6 +174,7 @@ The lobby.php page interacts with **check_game_status.php, checkReadiness.php, u
     * If a player aborts the game the other player needs to refresh to find out
     * Also, they need to logout to join in a new game
     * In the lobby page, needs a refresh to appear the other player's ID
+    * **Game is stuck in the first move of the first player and doesn't move on.** It seems that the code can't update correct the board based on coordinates.
 
 ### Game Functionality (game.php)
 
