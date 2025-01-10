@@ -235,17 +235,17 @@ This code defines functions for managing the game board in a board game. It incl
 
 * **Board Initialization**:
 
- * Creates a 20x20 2D array representing the empty board.
- * Stores the initial board state in the database.
+  * Creates a 20x20 2D array representing the empty board.
+  * Stores the initial board state in the database.
 * **Board Loading**:
 
- * Retrieves the current state of the board from the database.
+  * Retrieves the current state of the board from the database.
 * **Board Updating**:
 
- * Updates the board state in the database with the latest changes.
+  * Updates the board state in the database with the latest changes.
 * **Player Color Loading**:
 
- * Retrieves the colors assigned to each player from the database.
+  * Retrieves the colors assigned to each player from the database.
 * **Placement Validation**:
 
   * This is a core function that checks the validity of a piece placement.
@@ -271,10 +271,10 @@ This code defines functions for managing the game board in a board game. It incl
 
 * **Database Interactions**:
 
- * The code interacts with a database (likely MySQL) to store and retrieve game data:
- * Board initialization, loading, and updating.
- * Player information, including colors.
- * Piece information and placements.
+  * The code interacts with a database (likely MySQL) to store and retrieve game data:
+  * Board initialization, loading, and updating.
+  * Player information, including colors.
+  * Piece information and placements.
 
 Also, the code handles incoming requests (POST requests) to perform various actions related to the game board. These actions include:
 
@@ -291,12 +291,106 @@ Also, the code handles incoming requests (POST requests) to perform various acti
 
 **Request Handling**:
 
- * The code begins by checking for a POST request and the presence of a gameId.
- * It then uses a series of if-else statements to determine the requested action based on the action parameter.
- * Each action is handled by a corresponding function or a set of database queries.
+  * The code begins by checking for a POST request and the presence of a gameId.
+  * It then uses a series of if-else statements to determine the requested action based on the action parameter.
+  * Each action is handled by a corresponding function or a set of database queries.
 **Data Handling**:
 
- * The code receives data from the POST request, such as gameId, boardId, playerId, coordinates, and pieceId.
- * It validates the input data (e.g., checking for numeric values, checking for required parameters).
- * It interacts with the database to retrieve and update game data.
- * It uses JSON encoding to send data back to the client.
+  * The code receives data from the POST request, such as gameId, boardId, playerId, coordinates, and pieceId.
+  * It validates the input data (e.g., checking for numeric values, checking for required parameters).
+  * It interacts with the database to retrieve and update game data.
+  * It uses JSON encoding to send data back to the client.
+
+
+ ### Addition in script.js
+
+ ```
+ $('#startGameButton').click(function() {
+  const gameId = $('#global_gameid').val();
+
+  console.log('Game ID:', gameId);
+
+  $.post('start_game_functions.php', { gameId: gameId })
+      .done(function(data) {
+        data = JSON.parse(data);
+        console.log("Game started:", data);
+          if (data.status === 'success') {
+              $.post('board_transactions.php', { gameId: gameId, action: 'initialize' })
+                  // .done(function(response) {
+                      // if (response.status === 'success') {
+                      //     return $.post('board_transactions.php', { gameId: gameId, action: 'load' });
+                      // } else {
+                      //     throw new Error('Inside Error | Error starting the game.');
+                      // }
+                  // })
+                  .done(function(response) {
+                    response = JSON.parse(response);
+                    console.log("Board Info:", response);
+                      if (response.status === 'success') {
+                          const board_id = response.board_id;
+                          window.location.href = `game.php?game_id=${gameId}&board_id=${board_id}`;
+                      } else {
+                          throw new Error(response.message || 'Error loading board.');
+                      }
+                  })
+                  .fail(function(jqXHR, textStatus, errorThrown) {
+                      throw new Error('(Inner) Error fetching board data: ' + errorThrown);
+                  });
+          } else if (data.status === 'board-ok') {
+              const board_id = data.board_id;
+              window.location.href = `game.php?game_id=${gameId}&board_id=${board_id}`;
+          } else {
+              throw new Error(data.message || '(start_game_functions.php) Error starting the game.');
+          }
+      })
+      .fail(function(jqXHR, textStatus, errorThrown) {
+          throw new Error('Error starting the game: ' + errorThrown);
+      });
+});
+```
+
+
+### start_game_functions.php
+
+This code defines a function **startGame()** and handles a **POST request** to start a game. 
+Here's a breakdown:
+
+* **startGame()** Function:
+
+  * Checks if the game with the given gameId exists in the game_status table.
+  * If the game exists and its status is already "initialized":
+    * Retrieves the board_id for the game.
+    * Updates the game status to "started" and sets the initial player turn to "p1".
+    * Returns a success message with the board_id.
+  * If the game exists but is not initialized, it updates the game status to "initialized".
+  * If the game is not found, it returns an error message.
+* *POST Request Handling*:
+
+  * Checks if the request is a POST request and if the gameId is provided and valid.
+  * Calls the startGame() function to handle the game start logic.
+  * Encodes the result of the startGame() function as JSON and sends it back to the client.
+
+
+### end_game_functions.php
+
+
+This code defines a function **endGame()** and handles **POST requests** related to ending a game. Here's a breakdown:
+
+**endGame()** Function:
+
+  * Checks if the game with the given gameId exists in the game_status table.
+  * If the game exists and its status is already "ended", it returns a message indicating that the game is already ended.
+  * If the game exists and is not ended, it updates the game status to "ended".
+  * It then updates the result field in the game_status table to record the winner (if provided).
+**POST Request Handling**:
+
+  * Checks if the request is a **POST request** and if the gameId is provided and valid.
+  * Handles different actions based on the action parameter:
+    * **endingState**:
+      * Retrieves the player IDs associated with the game.
+      * Validates the provided winner ID to ensure it matches one of the player IDs or is 'd' for a draw.
+      * Calls the endGame() function to update the game status.
+      * Returns the result of the endGame() function as JSON.
+    * **returnEnd**:
+      * Updates the game status to "aborted" to indicate that the game was prematurely ended.
+      * Returns a success or error message based on the update result.
