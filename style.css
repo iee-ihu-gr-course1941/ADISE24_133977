@@ -147,3 +147,93 @@
 #player1-color[value="y"]::after {
     background-color: yellow;
 } */
+
+#gameInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#statsContainer {
+    display: inline-flex    ;
+    margin: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+#gameStatus, #gamePlayers {
+    padding: 10px;
+    border: 1px black solid;
+    text-align: center;
+    margin: 10px;
+    width: 50%;
+}
+
+.board-cell {
+    width: 25px;
+    height: 25px;
+    border: 1px black solid;
+}
+
+#playerForms{
+    display: flex;
+    justify-content: center;
+}
+
+.player-form {
+    margin: 0 10px;
+}
+
+.disabledDiv {
+    pointer-events: none;
+    opacity: 0.5; /* Optional: Add a visual cue by making the div semi-transparent */
+  }
+
+  .temp-box-style{
+    background-color: gray!important;
+  }
+
+  #piecesHeaders{
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    margin: 5px;
+  }
+
+  /* #piecesHeaders h3 {
+    margin: 0 10rem;
+} */
+
+/* #playerPieces {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1px black solid;
+    margin: 2rem 1rem;
+} */
+
+#player1pieces, #player2pieces {
+    display: flex;
+    align-items: center;
+    margin: 5px;
+    justify-content: space-between;
+}
+
+.piece {
+    margin: 5px;
+    text-align: left;
+}
+
+#gameStats {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.hidden-score {
+    display: none;
+}
+
+#game-return-btn {
+    margin: 2rem 1rem;
+}

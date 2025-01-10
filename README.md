@@ -394,3 +394,14 @@ This code defines a function **endGame()** and handles **POST requests** related
     * **returnEnd**:
       * Updates the game status to "aborted" to indicate that the game was prematurely ended.
       * Returns a success or error message based on the update result.
+
+
+Finally, in this version added all the appropriate tables in blokusdb. 
+These are:
+
+  * board.sql
+  * insert_game_procedure.sql
+  * insert_initial_player_pieces.sql
+  * pieces.sql
+  * placed_pieces.sql
+  * player_pieces.sql

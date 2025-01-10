@@ -43,12 +43,12 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) { // Is checking 
     }
 
     // Check if the player is already in a game
-    $sql = "SELECT * FROM game AS g INNER JOIN game_status AS gs ON gs.game_id = g.game_id WHERE (g.player1_id = '".$playerId."' AND gs.gstatus = 'not active') OR (g.player2_id IS NULL AND g.game_type = '".$gameType."' AND gs.gstatus = 'not active')";
+    $sql = "SELECT * FROM game AS g INNER JOIN game_status AS gs ON gs.game_id = g.game_id WHERE (g.player1_id = '".$playerId."' AND (gs.gstatus = 'not active' OR gs.gstatus = 'initialized')) OR (g.player2_id IS NULL AND g.game_type = '".$gameType."' AND (gs.gstatus = 'not active' OR gs.gstatus = 'initialized'))";
     $stmt = $conn->prepare($sql);
     $stmt->execute();
     $result = $stmt->get_result();
 
-    $sql2 = "SELECT * FROM game AS g INNER JOIN game_status AS gs ON gs.game_id = g.game_id WHERE (g.player2_id = '".$playerId."' AND gs.gstatus = 'not active')";
+    $sql2 = "SELECT * FROM game AS g INNER JOIN game_status AS gs ON gs.game_id = g.game_id WHERE (g.player2_id = '".$playerId."' AND (gs.gstatus = 'not active' OR gs.gstatus = 'initialized'))";
     $stmt2 = $conn->prepare($sql2);
     $stmt2->execute();
     $result2 = $stmt2->get_result();
@@ -71,7 +71,7 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) { // Is checking 
             $_SESSION['game_id'] = $gameId;
             $_SESSION['player1_id'] = $row['player1_id'];
             $_SESSION['player2_id'] = $playerId;
-            $sql = "UPDATE game SET player2_id = '" . $playerId . "' WHERE game_id = '" . $gameId . "'";
+            $sql = "UPDATE game SET player2_id = '" . $playerId . "', updated = NOW() WHERE game_id = '" . $gameId . "'";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
             // header("Location: lobby.php?game_id=$gameId");
@@ -91,7 +91,7 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) { // Is checking 
     } else {
         // Insert a new game into the database
         // $sql = "CALL insert_game('".$playerId."',".$gameType.", 0, '')";
-        $sql = "INSERT INTO game (player1_id, game_type) VALUES ('".$playerId."','".$gameType."')";
+        $sql = "INSERT INTO game (player1_id, game_type, created, updated) VALUES ('".$playerId."','".$gameType."', NOW(), NOW())";
         $stmt = $conn->prepare($sql);
 
         if ($stmt->execute()) {
@@ -106,7 +106,7 @@ if (!isset($_SESSION['logged_in']) || !$_SESSION['logged_in']) { // Is checking 
             echo '<input type="hidden" id="player1id_hidden" value="' . (isset($_SESSION['player1_id']) && $_SESSION['player1_id'] ? $_SESSION['player1_id'] : '') . '">';
 
             // Insert a new game status record
-            $sql = "INSERT INTO game_status (game_id, gstatus) VALUES ('" . $gameId . "', 'not active')";
+            $sql = "INSERT INTO game_status (game_id, gstatus, created, updated) VALUES ('" . $gameId . "', 'not active', NOW(), NOW())";
             $stmt = $conn->prepare($sql);
             $stmt->execute();
 

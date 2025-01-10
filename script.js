@@ -10,6 +10,8 @@ function checkSession() { // This function is checking if the user is logged in
   }
 }
 
+
+if (window.location.href.indexOf('lobby.php') !== -1) {
 document.getElementById('player1-ready').addEventListener('click', () => {
   const player1Color = document.getElementById('player1-color').value;
   const player3Color = document.getElementById('player3-color').value;
@@ -79,6 +81,8 @@ document.getElementById('player1-ready').addEventListener('click', () => {
   }
 });
 
+
+
 document.getElementById('player2-ready').addEventListener('click', () => {
   const player2Color = document.getElementById('player2-color').value;
   const player4Color = document.getElementById('player4-color').value;
@@ -118,10 +122,14 @@ document.getElementById('player2-ready').addEventListener('click', () => {
     alert('Please select different colors for Player 2.');
   }
 });
+}
+
 
 function validateColors(color1, color2){  // Check if both colors per user are selected and different
   return color1 !== color2 && color1 !== '' && color2 !== '';
 }
+
+
 
 function fetchGameInfo(color){ // Returns the full name of every color
   const inputColor = color;
@@ -138,6 +146,9 @@ function fetchGameInfo(color){ // Returns the full name of every color
     return 'No Color';
   }
 }
+
+
+
 
 function updatePlayerColors (){ // Will update player color status inside lobby.php
   // Check if the current page is lobby.php
@@ -176,6 +187,9 @@ function updatePlayerColors (){ // Will update player color status inside lobby.
 
 // Start the initial execution
 updatePlayerColors();
+
+
+
 
 
 function checkReadiness (){ // Will activate start game button if both players are ready
@@ -218,10 +232,130 @@ function checkReadiness (){ // Will activate start game button if both players a
 // Start the initial execution
 checkReadiness();
 
-document.getElementById('startGameButton').addEventListener('click', () => { //Redirects players to game based on its id
-  const gameId = document.getElementById('global_gameid').value;
-  window.location.href = `game.php?game_id=${gameId}`;
+
+
+// document.getElementById('startGameButton').addEventListener('click', () => { //Redirects players to game based on its id
+//   const gameId = document.getElementById('global_gameid').value;
+//   // window.location.href = `game.php?game_id=${gameId}`;
+//   // Make an AJAX request to start the game
+//   fetch('start_game_functions.php', {
+//     method: 'POST',
+//     headers: {
+//         'Content-Type': 'application/x-www-form-urlencoded'
+//     },
+//     body: new URLSearchParams({
+//         'gameId': gameId
+//     })
+//   })
+//   .then(response => {
+//       if (response.ok) {
+//           fetch('board_transactions.php', {
+//             method: 'POST',
+//             headers: {
+//                 'Content-Type': 'application/x-www-form-urlencoded'
+//             },
+//             body: new URLSearchParams({
+//                 'gameId': gameId,
+//                 'action' : 'initialize'
+//             })
+//           }).then(response => {
+//             if (response.ok) {
+//               return response.json(); // Parse the response as JSON
+//           } else {
+//               throw new Error('Error starting the game.'); 
+//           }
+//           })
+//           .then(async data => {
+//               if (data.status === 'success') {
+//                   // Game started successfully, fetch the initial board state
+//                   const boardResponse = await fetch('board_transactions.php', {
+//                   method: 'POST',
+//                   headers: {
+//                     'Content-Type': 'application/x-www-form-urlencoded'
+//                   },
+//                   body: new URLSearchParams({
+//                     'gameId': gameId,
+//                     'action': 'load'
+//                   })
+//                 });
+//                 if (boardResponse.ok) {
+//                   return boardResponse.json();
+//                 } else {
+//                   throw new Error('Error loading board.');
+//                 }
+//               } else {
+//                   throw new Error(data.message || 'Error starting the game.');
+//               }
+//           })
+//           .then(boardData => {
+//               if (boardData.status === 'success') {
+//                   // Process the loaded board data (e.g., display it on the screen)
+
+//                   const board_id = boardData.boardId;
+
+//                   // Game started successfully, redirect to game.php
+//                   window.location.href = `game.php?game_id=${gameId}&board_id=${board_id}`; // Redirect to the game page
+//               } else {
+//                   throw new Error(boardData.message || 'Error loading board.');
+//               }
+//           })
+//           .catch(error => {
+//               console.error('Error:', error);
+//               // Handle the error (e.g., display an error message to the user)
+//           });
+//       }
+//   })
+//   .catch(error => {
+//       console.error('Error:', error);
+//   });
+// });
+
+
+$('#startGameButton').click(function() {
+  const gameId = $('#global_gameid').val();
+
+  console.log('Game ID:', gameId);
+
+  $.post('start_game_functions.php', { gameId: gameId })
+      .done(function(data) {
+        data = JSON.parse(data);
+        console.log("Game started:", data);
+          if (data.status === 'success') {
+              $.post('board_transactions.php', { gameId: gameId, action: 'initialize' })
+                  // .done(function(response) {
+                      // if (response.status === 'success') {
+                      //     return $.post('board_transactions.php', { gameId: gameId, action: 'load' });
+                      // } else {
+                      //     throw new Error('Inside Error | Error starting the game.');
+                      // }
+                  // })
+                  .done(function(response) {
+                    response = JSON.parse(response);
+                    console.log("Board Info:", response);
+                      if (response.status === 'success') {
+                          const board_id = response.board_id;
+                          window.location.href = `game.php?game_id=${gameId}&board_id=${board_id}`;
+                      } else {
+                          throw new Error(response.message || 'Error loading board.');
+                      }
+                  })
+                  .fail(function(jqXHR, textStatus, errorThrown) {
+                      throw new Error('(Inner) Error fetching board data: ' + errorThrown);
+                  });
+          } else if (data.status === 'board-ok') {
+              const board_id = data.board_id;
+              window.location.href = `game.php?game_id=${gameId}&board_id=${board_id}`;
+          } else {
+              throw new Error(data.message || '(start_game_functions.php) Error starting the game.');
+          }
+      })
+      .fail(function(jqXHR, textStatus, errorThrown) {
+          throw new Error('Error starting the game: ' + errorThrown);
+      });
 });
+
+
+
 
 // window.addEventListener('beforeunload', function (event) {    // Tried to build a function that logout player everytime closes tab or window
 //   const gameId = document.getElementById('global_gameid').value;
@@ -250,3 +384,5 @@ document.getElementById('startGameButton').addEventListener('click', () => { //R
 //     // };
 
 // });
+
+
