@@ -1,7 +1,7 @@
 <?php
-$servername = "localhost:3306";
-$username = "root";
-$password = "";
+$servername = "users.it.teithe.gr";
+$username = "it133977";
+$password = "21091995";
 $dbname = "blokusdb";
 
 // Create connection
