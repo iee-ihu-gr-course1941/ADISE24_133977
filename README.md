@@ -206,17 +206,24 @@ Here's a brief overview of the game methods:
   * It also validates the coordinates where the piece is being placed.
   * If all validations pass, the function updates the board state and advances the game to the next player's turn.
 * **Next player**:
+
   * This function simply switches the current player based on the turn.
 * **Update board on server**:
+
   * This function sends an AJAX request to the server to update the game board state with the newly placed piece.
 * **Fetch and render placed pieces**:
+
   * This function retrieves the current state of the placed pieces from the server and updates the game board visually to reflect the changes.
 * **Validate coordinates**: (This functionality seems to be implemented but commented out)
+
  * This function likely checks if the coordinates provided for placing a piece are valid within the game board boundaries and rules.
 * **Has available pieces**:
+
  * This function seems to check if the current player has any available pieces to place on the board.
 * **Ending state**:
+
  * This function updates the game state to indicate the end of the game and assigns a winner.
 * **Calculate and display scores**:
+
  * This function retrieves the scores for each player from the server and calculates the total score.
 It likely also updates the game UI to display the final scores.
